@@ -77,3 +77,17 @@ def get_customer(id: str) -> Customer_Loyalty:
             return customer
 
     raise HTTPException(status_code=404, detail="Candidate not found")
+
+def use_route_names_as_operation_ids(app: FastAPI) -> None:
+    """
+    Simplify operation IDs so that generated API clients have simpler function
+    names.
+
+    Should be called only after all routes have been added.
+    """
+    for route in app.routes:
+        if isinstance(route, APIRoute):
+            route.operation_id = route.name  # in this case, operation ID will be 'greeting'
+
+
+use_route_names_as_operation_ids(app)

@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: Customer Loyalty
+  version: '1'
+  description: |
+
+    Customer Loyalty API helps you do awesome stuff. 🚀
+
+    ## Customers
+
+    This API allows you to view the loyalty information . You will be able to:
+
+    * **View a customer**
+    * **Add a customer** (_not implemented_)
+    * **Edit a customer** (_not implemented_)
+  termsOfService: http://example.com/terms/
+  contact:
+    name: Gerry Baird
+    url: https://github.com/gerry-baird/customer_loyalty
+    email: gerry.baird@uk.ibm.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+    - url: https://customer-loyalty-api.1c2y1q4nz2qc.us-east.codeengine.appdomain.cloud
+paths:
+  /:
+    get:
+      tags:
+        - Hello World
+      summary: Customer Loyalty Ping
+      description: Customer Loyalty Ping
+      operationId: greeting__get
+      responses:
+        '200':
+          description: Customer Loyalty Ping
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+      security:
+        - HTTPBasic: []
+  /customer/{id}:
+    get:
+      tags:
+        - Customer
+      summary: View a customer
+      description: View a customer
+      operationId: get_customer_customer__id__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Id
+      responses:
+        '200':
+          description: The customer loyalty details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer_Loyalty'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Customer_Loyalty:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        total_products:
+          type: integer
+          title: Total Products
+        relationship_length:
+          type: integer
+          title: Relationship Length
+        customer_age:
+          type: integer
+          title: Customer Age
+        current_products:
+          type: integer
+          title: Current Products
+      type: object
+      required:
+        - id
+        - name
+        - total_products
+        - relationship_length
+        - customer_age
+        - current_products
+      title: Customer_Loyalty
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Message:
+      properties:
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+        - message
+      title: Message
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBasic:
+      type: http
+      scheme: basic
