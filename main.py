@@ -23,7 +23,7 @@ app = FastAPI(
     terms_of_service="http://example.com/terms/",
     contact={
         "name": "Gerry Baird",
-        "url": "https://github.com/gerry-baird/employee-eligibility-api",
+        "url": "https://github.com/gerry-baird/customer_loyalty",
         "email": "gerry.baird@uk.ibm.com",
     },
     license_info={
@@ -34,11 +34,46 @@ app = FastAPI(
 
 security = HTTPBasic()
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+class Customer_Loyalty(BaseModel):
+    id: str
+    name: str
+    total_products: int
+    relationship_length: int
+    customer_age: int
+    current_products: int
+
+class Message(BaseModel):
+    message: str
+
+def regenCustomers():
+    return [
+        Customer_Loyalty(id="abc1234", name="Fred", total_products=4, relationship_length=36,
+                  customer_age=55, current_products=2)
+        ]
 
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+# this is our datastore
+pre_baked_customers = regenCustomers()
+
+@app.get("/",
+         summary='Customer Loyalty Ping',
+         description='Customer Loyalty Ping',
+         response_description="Customer Loyalty Ping",
+         tags=["Hello World"]
+         )
+async def greeting(credentials: HTTPBasicCredentials = Depends(security)) -> Message:
+    return {"message": "Customer Loyalty is Alive"}
+
+
+@app.get("/customer/{id}",
+         summary='View a customer',
+         description='View a customer',
+         response_description="The customer loyalty details",
+         tags=["Customer"]
+         )
+def get_customer(id: str) -> Customer_Loyalty:
+    for customer in pre_baked_customers:
+        if customer.id.lower() == id.lower():
+            return customer
+
+    raise HTTPException(status_code=404, detail="Candidate not found")
